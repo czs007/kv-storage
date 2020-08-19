@@ -57,7 +57,7 @@ type Store interface {
 	DeleteRow(ctx context.Context, key Key, timestamp Timestamp)
 	DeleteRows(ctx context.Context, keys []Key, timestamp Timestamp)
 
-	LogPut(ctx context.Context, key Key, value Value, timestamp Timestamp, channel int)
+	LogPut(ctx context.Context, log Value, timestamp Timestamp, channel int)
 	LogFetch(ctx context.Context, start Timestamp, end Timestamp, channels []int)
 
 	GetSegmenIndex(ctx context.Context, segment string) SegmentIndex
