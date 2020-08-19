@@ -160,8 +160,8 @@ func main() {
 	// Parse command line
 	myflag := flag.NewFlagSet("myflag", flag.ExitOnError)
 	myflag.IntVar(&durationSecs, "d", 5, "Duration of each test in seconds")
-	myflag.IntVar(&threads, "t", 1, "Number of threads to run")
-	myflag.IntVar(&loops, "l", 1, "Number of times to repeat test")
+	myflag.IntVar(&threads, "t", 100, "Number of threads to run")
+	myflag.IntVar(&loops, "l", 3, "Number of times to repeat test")
 	var sizeArg string
 	var storeType string
 	myflag.StringVar(&sizeArg, "z", "0.1K", "Size of objects in bytes with postfix K, M, and G")
