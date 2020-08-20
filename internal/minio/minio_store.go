@@ -1,90 +1,43 @@
 package minio_driver
 
 import (
-	"bytes"
 	"context"
-	"github.com/minio/minio-go/v7"
-	"github.com/minio/minio-go/v7/pkg/credentials"
-	"io"
-	"storage/internal/minio/codec"
 	. "storage/pkg/types"
+	. "storage/internal/minio/codec"
 )
 
-type minioStore struct {
-	client *minio.Client
+type minioDriver struct {
+	driver *minioStore
 }
 
-func RawBatchGet(ctx context.Context, key Key) []Value{
+func (s *minioDriver) put(ctx context.Context, key Key, value Value, timestamp Timestamp, suffix string) error {
+	minioKey := MvccEncode(key, timestamp)
 
+	s.driver.PUT(ctx, minioKey, )
 }
+scanLE(ctx context.Context, key Key, timestamp Timestamp, withValue bool) ([]Timestamp, []Key, []Value, error)
+scanGE(ctx context.Context, key Key, timestamp Timestamp, withValue bool) ([]Timestamp, []Key, []Value, error)
+scan(ctx context.Context, key Key, start Timestamp, end Timestamp, withValue bool) ([]Timestamp, []Key, []Value, error)
+deleteLE(ctx context.Context, key Key, timestamp Timestamp) error
+deleteGE(ctx context.Context, key Key, timestamp Timestamp) error
+deleteRange(ctx context.Context, key Key, start Timestamp, end Timestamp) error
 
-func (s *minioStore) RawGet(ctx context.Context, key Key) Value{
-	key1 := string(key)
-	object, err := s.client.GetObject(ctx, bucketName, key1, minio.GetObjectOptions{})
+GetRow(ctx context.Context, key Key, timestamp Timestamp) (Value, error)
+GetRows(ctx context.Context, keys []Key, timestamp Timestamp) ([]Value, error)
 
-	if err != nil {
-		return nil
-	}
+AddRow(ctx context.Context, key Key, value Value, segment string, timestamp Timestamp) error
+AddRows(ctx context.Context, keys []Key, values []Value, segments []string, timestamp Timestamp) error
 
-	size := 256 * 1024
-	buf := make([]byte, size)
-	n, err := object.Read(buf)
-	if err != nil && err != io.EOF {
-		return nil
-	}
-	return buf[:n]
-}
-func (s *minioStore) RawPut(ctx context.Context, key Key, value Value){
+DeleteRow(ctx context.Context, key Key, timestamp Timestamp) error
+DeleteRows(ctx context.Context, keys []Key, timestamp Timestamp) error
 
-	reader := bytes.NewReader(value)
-	s.client.PutObject(ctx, bucketName, string(key), reader, int64(len(value)), minio.PutObjectOptions{})
-}
+PutLog(ctx context.Context, key Key, value Value, timestamp Timestamp, channel int) error
+FetchLog(ctx context.Context, start Timestamp, end Timestamp, channels []int) error
 
-func (s *minioStore) RawDeleteAll(ctx context.Context, key Key){
+GetSegmenIndex(ctx context.Context, segment string) (SegmentIndex, error)
+PutSegmentIndex(ctx context.Context, segment string, index SegmentIndex) error
+DeleteSegmentIndex(ctx context.Context, segment string) error
 
-	for i := 0; i < len(key); i++ {
-		s.client.RemoveObjects()
-	}
-
-}
-func (s *minioStore) RawDelete(ctx context.Context, key Key){
-
-}
-
-func (s *minioStore)	Get(ctx context.Context, key Key, timestamp Timestamp) Value{
-
-}
-func (s *minioStore)	BatchGet(ctx context.Context, keys []Key, timestamp Timestamp) []Value{
-
-}
-
-func (s *minioStore)	GetAll(ctx context.Context, key Key, withValue bool) ([]Timestamp, []Key, []Value){
-
-}
-func (s *minioStore)	ScanLE(ctx context.Context, key Key, timestamp Timestamp, withValue bool) ([]Timestamp, []Key, []Value){
-
-}
-func (s *minioStore)	ScanGE(ctx context.Context, key Key, timestamp Timestamp, withValue bool) ([]Timestamp, []Key, []Value){
-
-}
-func (s *minioStore)	ScanRange(ctx context.Context, key Key, start Timestamp, end Timestamp, withValue bool) ([]Timestamp, []Key, []Value){
-
-}
-func (s *minioStore)	PUT(ctx context.Context, key Key, value Value, timestamp Timestamp, suffix string){
-
-}
-func (s *minioStore)	DeleteLE(ctx context.Context, key Key, timestamp Timestamp){
-
-}
-func (s *minioStore)	DeleteGE(ctx context.Context, key Key, timestamp Timestamp){
-
-}
-func (s *minioStore)	RangeDelete(ctx context.Context, key Key, start Timestamp, end Timestamp){
-
-}
-func (s *minioStore)	LogPut(ctx context.Context, key Key, value Value, timestamp Timestamp, suffix string){
-
-}
-func (s *minioStore)	LogFetch(ctx context.Context, start Timestamp, end Timestamp, channels []int){
-
-}
+GetSegmentDL(ctx context.Context, segment string) (SegmentDL, error)
+SetSegmentDL(ctx context.Context, segment string, log SegmentDL) error
+DeleteSegmentDL(ctx context.Context, segment string) error
