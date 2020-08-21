@@ -189,7 +189,7 @@ func main() {
 			log.Fatalf("Error when creating storage " + err.Error())
 		}
 	case "minio":
-		store, err = minio.NewMinIOStore(context.Background())
+		store, err = minio.NewMinioStore(context.Background())
 		if err != nil {
 			log.Fatalf("Error when creating storage " + err.Error())
 		}

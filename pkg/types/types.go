@@ -33,7 +33,7 @@ type storeEngine interface {
 	GET(ctx context.Context, key Key) (Value, error)
 
 	GetByPrefix(ctx context.Context, prefix Key, keyOnly bool) ([]Key, []Value, error)
-	Scan(ctx context.Context, keyStart Key, keyEnd Key, keyOnly bool) ([]Key, []Value, error)
+	Scan(ctx context.Context, keyStart Key, keyEnd Key, limit int, keyOnly bool) ([]Key, []Value, error)
 
 	Delete(ctx context.Context, key Key) error
 	DeleteByPrefix(ctx context.Context, prefix Key) error
@@ -42,9 +42,9 @@ type storeEngine interface {
 
 type Store interface {
 	put(ctx context.Context, key Key, value Value, timestamp Timestamp, suffix string) error
-	scanLE(ctx context.Context, key Key, timestamp Timestamp, withValue bool) ([]Timestamp, []Key, []Value, error)
-	scanGE(ctx context.Context, key Key, timestamp Timestamp, withValue bool) ([]Timestamp, []Key, []Value, error)
-	scan(ctx context.Context, key Key, start Timestamp, end Timestamp, withValue bool) ([]Timestamp, []Key, []Value, error)
+	scanLE(ctx context.Context, key Key, timestamp Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
+	scanGE(ctx context.Context, key Key, timestamp Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
+	//scan(ctx context.Context, key Key, start Timestamp, end Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
 	deleteLE(ctx context.Context, key Key, timestamp Timestamp) error
 	deleteGE(ctx context.Context, key Key, timestamp Timestamp) error
 	deleteRange(ctx context.Context, key Key, start Timestamp, end Timestamp) error

@@ -15,7 +15,7 @@ type minioStore struct {
 	client *minio.Client
 }
 
-func NewMinIOStore(ctx context.Context) (*minioStore, error) {
+func NewMinioStore(ctx context.Context) (*minioStore, error) {
 	// to-do read conf
 	var endPoint = "127.0.0.1:9000"
 	var accessKeyID = "testminio"
@@ -94,14 +94,13 @@ func (s *minioStore) GetByPrefix(ctx context.Context, prefix Key, keyOnly bool) 
 
 }
 
-func (s *minioStore) Scan(ctx context.Context, keyStart Key, keyEnd Key, keyOnly bool) ([]Key, []Value, error){
-	objectsCh := make(chan minio.ObjectInfo)
+func (s *minioStore) Scan(ctx context.Context, keyStart Key, keyEnd Key, limit int, keyOnly bool) ([]Key, []Value, error){
 	var keys []Key
 	var values []Value
+	limitCount := uint(limit)
 	for object := range s.client.ListObjects(ctx, bucketName, minio.ListObjectsOptions{Prefix:  string(keyStart)}) {
 		if object.Key <= string(keyEnd) {
 			keys = append(keys, []byte(object.Key))
-			objectsCh <- object
 			if !keyOnly {
 				value, err := s.GET(ctx, []byte(object.Key))
 				if err != nil {
@@ -109,6 +108,10 @@ func (s *minioStore) Scan(ctx context.Context, keyStart Key, keyEnd Key, keyOnly
 				}
 				values = append(values, value)
 			}
+		}
+		limitCount--;
+		if limitCount <= 0{
+			break
 		}
 	}
 
