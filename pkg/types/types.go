@@ -1,6 +1,8 @@
 package types
 
-import "context"
+import (
+	"context"
+)
 
 type Key = []byte
 type Value = []byte
@@ -40,7 +42,7 @@ type Store interface {
 	put(ctx context.Context, key Key, value Value, timestamp Timestamp, suffix string) error
 	scanLE(ctx context.Context, key Key, timestamp Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
 	scanGE(ctx context.Context, key Key, timestamp Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
-	scan(ctx context.Context, key Key, start Timestamp, end Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
+	//scan(ctx context.Context, key Key, start Timestamp, end Timestamp, keyOnly bool) ([]Timestamp, []Key, []Value, error)
 	deleteLE(ctx context.Context, key Key, timestamp Timestamp) error
 	deleteGE(ctx context.Context, key Key, timestamp Timestamp) error
 	deleteRange(ctx context.Context, key Key, start Timestamp, end Timestamp) error
